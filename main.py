@@ -13,19 +13,22 @@ def sort_wordbank(dictionary):
 	return dict(sorted(dictionary.items(), key=lambda x: x[1], reverse=False))
 
 
-def letter_in_list(letter, wordbank):
+def letter_in_word(letter, wordbank):
 	dict = {}
 	for word in wordbank:
 		if letter in word:
 			dict[word] = wordbank[word]
 	return dict
 
-def letter_not_in_list(letter, wordbank):
-	dict = {}
-	for word in wordbank:
-		if letter not in word:
-			dict[word] = wordbank[word]
-	return dict
+def letter_not_in_word(letter, wordbank, index):
+    dict = {}
+    for word in wordbank:
+        if word.count(letter) < 2:
+            dict[word] = wordbank[word]
+        else:
+            if letter != word[index]:
+                dict[word] = wordbank[word]
+    return dict
 
 def letter_at_index(letter,index,wordbank):
 	dict = {}
@@ -100,17 +103,17 @@ wordbank = score_wordbank(wordbank)
 wordbank = sort_wordbank(wordbank)
 
 for attempt in range(7):
-    clear_screen()
     guess = input("Guess "+str(attempt+1)+":   ")
     score = input("How did "+guess+" score:  ").upper()
+
     for index, value in enumerate(score):
         if value == "G":
             wordbank = letter_at_index(guess[index],index,wordbank)
         elif value == "Y":
-            wordbank = letter_in_list(guess[index],wordbank)
+            wordbank = letter_in_word(guess[index],wordbank)
             wordbank = letter_not_at_index(guess[index],index, wordbank)
         else:
-            wordbank = letter_not_at_index(guess[index],index, wordbank)
+            wordbank = letter_not_in_word(guess[index], wordbank, index)
     for word in wordbank:
         print(word, wordbank[word])
 		
