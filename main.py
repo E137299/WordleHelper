@@ -75,9 +75,17 @@ def get_frequencies(wordbank):
         dictionaries.append(dict)
     return dictionaries
 
+def score_word(word,dictionaries):
+    score = 0
+    for i in range(5):
+        score += dictionaries[i][word[i]]
+    return score
+
+
+
 dictionaries = get_frequencies(wordbank)
-for dict in dictionaries:
-    print(dict)
+print(score_word("qqqqq",dictionaries))
+
 
 # for attempt in range(7):
 # 	guess = input("Guess "+str(attempt+1)+":   ")
