@@ -1,3 +1,5 @@
+import os
+
 def sorted_frequency(letter_frequency):
 	values = sorted(letter_frequency.values())
 	ranked=""
@@ -10,9 +12,6 @@ def sorted_frequency(letter_frequency):
 def sort_wordbank(dictionary):
 	return dict(sorted(dictionary.items(), key=lambda x: x[1], reverse=False))
 
-words = open("wordbank.txt","r") #opens text file for reading
-wordbank = words.read() #stores contents of txt file in variable
-wordbank = wordbank.split() #place words into a list.
 
 def letter_in_list(letter, wordbank):
 	dict = {}
@@ -81,24 +80,38 @@ def score_word(word,dictionaries):
         score += dictionaries[i][word[i]]
     return score
 
+def score_wordbank(wordbank):
+    dictionaries = get_frequencies(wordbank)
+    bank = {}
+    for word in wordbank:
+        bank[word] = score_word(word, dictionaries)
+    return bank
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
-dictionaries = get_frequencies(wordbank)
-print(score_word("qqqqq",dictionaries))
 
+words = open("wordbank.txt","r") #opens text file for reading
+wordbank = words.read() #stores contents of txt file in variable
+wordbank = wordbank.split() #place words into a list.
 
-# for attempt in range(7):
-# 	guess = input("Guess "+str(attempt+1)+":   ")
-# 	score = input("How did "+guess+" score:  ").upper()
-# 	for index, value in enumerate(score):
-# 		if value == "G":
-# 			wordbank = letter_at_index(guess[index],index,wordbank)
-# 		elif value == "Y":
-# 			wordbank = letter_in_list(guess[index],wordbank)
-# 			wordbank = letter_not_at_index(guess[index],index, wordbank)
-# 		else:
-# 			wordbank = letter_not_at_index(guess[index],index, wordbank)
-# 	for word in wordbank:
-# 		print(word, wordbank[word])
+wordbank = score_wordbank(wordbank)
+wordbank = sort_wordbank(wordbank)
+
+for attempt in range(7):
+    clear_screen()
+    guess = input("Guess "+str(attempt+1)+":   ")
+    score = input("How did "+guess+" score:  ").upper()
+    for index, value in enumerate(score):
+        if value == "G":
+            wordbank = letter_at_index(guess[index],index,wordbank)
+        elif value == "Y":
+            wordbank = letter_in_list(guess[index],wordbank)
+            wordbank = letter_not_at_index(guess[index],index, wordbank)
+        else:
+            wordbank = letter_not_at_index(guess[index],index, wordbank)
+    for word in wordbank:
+        print(word, wordbank[word])
 		
 				
