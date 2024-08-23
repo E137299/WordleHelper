@@ -23,9 +23,9 @@ def letter_in_word(letter, wordbank):
 def letter_not_in_word(letter, wordbank, index):
     dict = {}
     for word in wordbank:
-        if word.count(letter) < 2:
+        if word.count(letter) == 0:
             dict[word] = wordbank[word]
-        else:
+        elif word.count(letter) > 1:
             if letter != word[index]:
                 dict[word] = wordbank[word]
     return dict
