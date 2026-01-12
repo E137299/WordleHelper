@@ -20,15 +20,65 @@ def letter_in_word(letter, wordbank):
 			dict[word] = wordbank[word]
 	return dict
 
-def letter_not_in_word(letter, wordbank, index):
-    dict = {}
-    for word in wordbank:
-        if word.count(letter) == 0:
-            dict[word] = wordbank[word]
-        elif word.count(letter) > 1:
-            if letter != word[index]:
-                dict[word] = wordbank[word]
-    return dict
+# def letter_not_in_word(letter, wordbank, index):
+#     dict = {}
+#     for word in wordbank:
+#         if letter not in word:
+#             dict[word] = wordbank[word]
+#         else:
+#             if word.count(letter)>2:
+#                 for word in wordbank:
+#                     for i in indexes:
+#                         if word[i] != letter:
+    # return dict
+
+def letter_not_in_word(letter, wordbank, indexes):
+    """
+    letter  : the letter that received a gray result
+    wordbank: dictionary of {word: score}
+    indexes : list of indexes where the letter is ALLOWED (green/yellow positions)
+    """
+
+    filtered = {}
+
+    # number of confirmed occurrences of the letter
+    allowed_count = len(indexes)
+
+    for word, score in wordbank.items():
+
+        # Case 1: letter truly not in the word
+        if letter not in word:
+            filtered[word] = score
+            continue
+
+        # Case 2: letter appears, but must match Wordle constraints
+        # Rule 1: word cannot have more occurrences than allowed
+        if word.count(letter) != allowed_count:
+            continue
+
+        # Rule 2: letter must appear at all allowed indexes
+        valid = True
+        for i in indexes:
+            if word[i] != letter:
+                valid = False
+                break
+
+        if valid:
+            filtered[word] = score
+
+    return filtered
+
+def get_confirmed_indexes(letter, guess, feedback):
+    indexes = []
+
+    for i in range(len(guess)):
+        if guess[i] == letter and feedback[i] in ("g", "y"):
+            indexes.append(i)
+
+    return indexes
+
+
+
 
 def letter_at_index(letter,index,wordbank):
 	dict = {}
@@ -107,13 +157,15 @@ for attempt in range(7):
     score = input("How did "+guess+" score:  ").upper()
 
     for index, value in enumerate(score):
+        indexes = get_confirmed_indexes("i", "civil", "bgbbb")
+
         if value == "G":
             wordbank = letter_at_index(guess[index],index,wordbank)
         elif value == "Y":
             wordbank = letter_in_word(guess[index],wordbank)
             wordbank = letter_not_at_index(guess[index],index, wordbank)
         else:
-            wordbank = letter_not_in_word(guess[index], wordbank, index)
+            wordbank = letter_not_in_word(guess[index], wordbank, indexes)
     for word in wordbank:
         print(word, wordbank[word])
 		
